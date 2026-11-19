@@ -11,10 +11,12 @@ import math
 import os
 import random
 import time
-from datetime import datetime, timezone
-from typing import Dict, List, Any
+from datetime import UTC, datetime
+from typing import Any
+
 import boto3
 from botocore.config import Config
+from botocore.exceptions import BotoCoreError, ClientError
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,7 +56,7 @@ def criar_cliente_kinesis():
 
 class SimuladorSensores:
     def __init__(self, total_sensores: int):
-        self.sensores: List[Dict[str, str]] = []
+        self.sensores: list[dict[str, Any]] = []
         for i in range(1, total_sensores + 1):
             tipo = TIPOS_SENSORES[(i - 1) % len(TIPOS_SENSORES)]
             zona = ZONAS[(i - 1) % len(ZONAS)]
@@ -69,7 +71,7 @@ class SimuladorSensores:
 
     def _fator_horario(self) -> float:
         """Simula variação diária com picos nos horários de pico (8h e 18h)."""
-        agora = datetime.now(timezone.utc)
+        agora = datetime.now(UTC)
         hora = agora.hour + agora.minute / 60.0
         # Picos de rush
         rush_manha = math.exp(-0.5 * ((hora - 8.0) / 1.5) ** 2)
@@ -77,12 +79,12 @@ class SimuladorSensores:
         base = 0.3 + 0.7 * max(rush_manha, rush_tarde)
         return max(0.1, min(1.0, base))
 
-    def gerar_evento(self, sensor: Dict[str, Any]) -> Dict[str, Any]:
+    def gerar_evento(self, sensor: dict[str, Any]) -> dict[str, Any]:
         """Gera um evento no formato canônico da seção 5.1 da arquitetura."""
         tipo = sensor["tipo"]
         sensor_id = sensor["sensorId"]
         zona = sensor["zona"]
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         timestamp_iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         event_id = f"{sensor_id}-{int(time.time() * 1000)}"
 
@@ -93,7 +95,7 @@ class SimuladorSensores:
         injetar_anomalia = random.random() < ANOMALY_CHANCE
         fator_rush = self._fator_horario()
 
-        medidas: Dict[str, float] = {}
+        medidas: dict[str, float] = {}
 
         if tipo == "poluicao":
             # PM2.5 normal: ~18 +- 4, com rush sobe para ~35. Anomalia: 70 a 140
@@ -147,7 +149,7 @@ class SimuladorSensores:
         return evento
 
 
-def publicar_lote(kinesis_client, eventos: List[Dict[str, Any]]) -> int:
+def publicar_lote(kinesis_client, eventos: list[dict[str, Any]]) -> int:
     """Publica registros no Kinesis respeitando o limite de 500 registros por chamada."""
     publicados = 0
     for i in range(0, len(eventos), 500):
@@ -168,7 +170,7 @@ def publicar_lote(kinesis_client, eventos: List[Dict[str, Any]]) -> int:
             publicados += len(lote) - falhas
             if falhas > 0:
                 logger.error(f"{falhas} registros falharam ao serem publicados no Kinesis")
-        except Exception as ex:
+        except (ClientError, BotoCoreError, OSError) as ex:
             logger.error(f"Erro ao publicar registros no Kinesis: {ex}")
     return publicados
 
@@ -182,7 +184,7 @@ def aguardar_stream(kinesis_client, max_tentativas=15):
             if status == "ACTIVE":
                 logger.info(f"Stream {STREAM_NAME} está ATIVO.")
                 return True
-        except Exception as e:
+        except (ClientError, BotoCoreError, OSError) as e:
             logger.warning(f"Aguardando stream {STREAM_NAME}... ({e})")
         time.sleep(2)
     return False

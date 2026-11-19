@@ -10,7 +10,8 @@ import json
 import logging
 import os
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 import boto3
 
 logger = logging.getLogger()
@@ -33,7 +34,7 @@ sns_client = boto3.client("sns", **sns_kwargs)
 def handler(event, context):
     logger.info(f"Iniciando geração de relatório analítico agendado: {json.dumps(event)}")
 
-    agora = datetime.now(timezone.utc)
+    agora = datetime.now(UTC)
     ano = agora.strftime("%Y")
     mes = agora.strftime("%m")
     dia = agora.strftime("%d")

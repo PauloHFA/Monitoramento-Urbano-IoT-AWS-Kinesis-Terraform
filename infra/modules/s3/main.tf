@@ -2,9 +2,9 @@
 
 locals {
   buckets = {
-    telemetria_raw = "${var.project_name}-${var.environment}-telemetria-raw"
+    telemetria_raw      = "${var.project_name}-${var.environment}-telemetria-raw"
     ocorrencias_imagens = "${var.project_name}-${var.environment}-ocorrencias-imagens"
-    relatorios = "${var.project_name}-${var.environment}-relatorios"
+    relatorios          = "${var.project_name}-${var.environment}-relatorios"
   }
 }
 

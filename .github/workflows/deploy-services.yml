@@ -1,4 +1,4 @@
-name: CI/CD - Build e Implantação no ECS (OIDC)
+name: CI/CD - Build, Testes e Implantação no ECS (OIDC)
 
 on:
   push:
@@ -12,29 +12,40 @@ permissions:
 
 jobs:
   test:
-    name: Testes e Validação
-    runs-on: ubuntu-latest
+    name: Typecheck, Build, Testes & Ruff
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout do Código
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js 20
+      - name: Configurar Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
-      - name: Instalar Dependências
+      - name: Instalar Dependências Node
         run: npm ci
 
-      - name: Executar Testes Unitários
+      - name: Verificar Tipagem (Workspaces)
+        run: npm run lint
+
+      - name: Compilar Workspaces TypeScript
+        run: npm run build
+
+      - name: Executar Testes Unitários (Vitest)
         run: npm test
+
+      - name: Lint Python (Lambdas e Simulador)
+        run: |
+          python3 -m pip install --quiet ruff
+          ruff check apps/simulator apps/lambdas
 
   deploy:
     name: Build Docker e Deploy no ECS
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.AWS_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         service:

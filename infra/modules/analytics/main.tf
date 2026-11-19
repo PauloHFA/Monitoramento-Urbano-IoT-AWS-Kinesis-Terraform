@@ -159,11 +159,11 @@ resource "aws_kinesis_firehose_delivery_stream" "telemetria" {
     prefix              = "telemetria-raw/ano=!{timestamp:yyyy}/mes=!{timestamp:MM}/dia=!{timestamp:dd}/"
     error_output_prefix = "telemetria-raw-erros/!{firehose:error-output-type}/ano=!{timestamp:yyyy}/"
 
-    buffer_size     = 5   # MB
-    buffer_interval = 300 # Segundos (5 min)
+    buffering_size     = 5   # MB
+    buffering_interval = 300 # Segundos (5 min)
 
     cloudwatch_logging_options {
-      enabled = true
+      enabled         = true
       log_group_name  = "/aws/kinesisfirehose/${var.project_name}-${var.environment}-telemetria"
       log_stream_name = "S3Delivery"
     }

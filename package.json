@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "build": "npm run --workspaces build",
-    "test": "npm run --workspaces test",
-    "lint": "npm run --workspaces lint",
+    "test": "npm run --workspaces --if-present test",
+    "lint": "npm run --workspaces --if-present lint",
     "compose:up": "docker-compose up -d postgres localstack",
     "compose:down": "docker-compose down",
     "compose:apps": "docker-compose --profile apps up -d",

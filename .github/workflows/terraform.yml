@@ -17,7 +17,7 @@ permissions:
 jobs:
   terraform:
     name: Terraform Format, Validate & Plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: infra/envs/dev
@@ -33,22 +33,20 @@ jobs:
       - name: Terraform Format Check
         run: terraform fmt -check -recursive ../../
 
+      - name: Terraform Init (Offline Validate)
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
       - name: Autenticar na AWS via OIDC
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && vars.AWS_TERRAFORM_ENABLED == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
 
-      - name: Terraform Init
-        if: github.event_name == 'pull_request'
-        run: terraform init
-
-      - name: Terraform Validate
-        if: github.event_name == 'pull_request'
-        run: terraform validate -no-color
-
       - name: Terraform Plan
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && vars.AWS_TERRAFORM_ENABLED == 'true'
         run: terraform plan -no-color
 

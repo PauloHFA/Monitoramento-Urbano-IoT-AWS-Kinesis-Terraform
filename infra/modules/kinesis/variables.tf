@@ -1,11 +1,11 @@
 variable "project_name" {
-  type        = string
-  default     = "smartcity-pulse"
+  type    = string
+  default = "smartcity-pulse"
 }
 
 variable "environment" {
-  type        = string
-  default     = "dev"
+  type    = string
+  default = "dev"
 }
 
 variable "shard_count" {
@@ -21,7 +21,7 @@ variable "retention_period_hours" {
 }
 
 variable "tags" {
-  type        = map(string)
-  default     = {}
+  type    = map(string)
+  default = {}
 }
 

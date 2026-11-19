@@ -1,4 +1,9 @@
-# SmartCity Pulse 🏙️⚡
+# SmartCity Pulse 🏙️⚡ (`Monitoramento-Urbano-IoT-AWS-Kinesis-Terraform`)
+
+[![CI/CD Services](https://github.com/PauloHFA/Monitoramento-Urbano-IoT-AWS-Kinesis-Terraform/actions/workflows/deploy-services.yml/badge.svg)](https://github.com/PauloHFA/Monitoramento-Urbano-IoT-AWS-Kinesis-Terraform/actions/workflows/deploy-services.yml)
+[![Terraform](https://github.com/PauloHFA/Monitoramento-Urbano-IoT-AWS-Kinesis-Terraform/actions/workflows/terraform.yml/badge.svg)](https://github.com/PauloHFA/Monitoramento-Urbano-IoT-AWS-Kinesis-Terraform/actions/workflows/terraform.yml)
+
+> Acompanhamento de pendências e backlog em [`PENDENCIAS.md`](PENDENCIAS.md).
 
 Plataforma resiliente de monitoramento urbano e IoT em tempo real, construída segundo os princípios do **AWS Well-Architected Framework**. Implementa ingestão contínua de telemetria, detecção estatística de anomalias, tratamento de incidentes com upload de imagens e relatórios analíticos automatizados.
 

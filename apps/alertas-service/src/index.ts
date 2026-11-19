@@ -8,13 +8,20 @@ dotenv.config();
 const region = process.env.AWS_REGION || 'us-east-1';
 const endpoint = process.env.AWS_ENDPOINT_URL || undefined;
 
+const explicitCredentials =
+  process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+    ? {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      }
+    : endpoint
+      ? { accessKeyId: 'test', secretAccessKey: 'test' }
+      : undefined;
+
 const sqs = new SQSClient({
   region,
   endpoint,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'test',
-  },
+  ...(explicitCredentials ? { credentials: explicitCredentials } : {}),
 });
 
 const pool = new Pool({

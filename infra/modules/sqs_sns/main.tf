@@ -45,8 +45,8 @@ resource "aws_sqs_queue_policy" "alertas_sns_publish" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "AllowSNSPublishToSQS"
-        Effect    = "Allow"
+        Sid    = "AllowSNSPublishToSQS"
+        Effect = "Allow"
         Principal = {
           Service = "sns.amazonaws.com"
         }

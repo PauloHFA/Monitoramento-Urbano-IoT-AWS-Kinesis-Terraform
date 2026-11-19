@@ -6,7 +6,7 @@ locals {
 }
 
 resource "aws_cloudwatch_log_group" "services_logs" {
-  for_each          = toset(locals.services)
+  for_each          = toset(local.services)
   name              = "/ecs/${var.project_name}-${var.environment}-${each.value}"
   retention_in_days = 7
 

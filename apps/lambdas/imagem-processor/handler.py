@@ -10,6 +10,7 @@ import json
 import logging
 import os
 from urllib.parse import unquote_plus
+
 import boto3
 from PIL import Image
 
@@ -101,9 +102,9 @@ def handler(event, context):
                 )
                 logger.info(f"Mensagem enviada para SQS: {mensagem_sqs}")
 
-        except Exception as e:
-            logger.error(f"Erro ao processar imagem {record}: {str(e)}", exc_info=True)
-            raise e
+        except Exception:
+            logger.exception("Erro ao processar imagem %s", record)
+            raise
 
     return {"statusCode": 200, "body": json.dumps("Processamento concluído com sucesso")}
 

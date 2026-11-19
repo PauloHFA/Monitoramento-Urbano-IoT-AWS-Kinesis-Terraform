@@ -138,10 +138,10 @@ resource "aws_route_table_association" "data" {
 
 # Gateway Endpoints Gratuitos para S3 e DynamoDB (Evita tráfego pago pelo NAT)
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id       = aws_vpc.main.id
-  service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids = concat([aws_route_table.public.id], aws_route_table.app[*].id)
+  route_table_ids   = concat([aws_route_table.public.id], aws_route_table.app[*].id)
 
   tags = merge(var.tags, {
     Name = "${var.project_name}-${var.environment}-s3-endpoint"
@@ -149,10 +149,10 @@ resource "aws_vpc_endpoint" "s3" {
 }
 
 resource "aws_vpc_endpoint" "dynamodb" {
-  vpc_id       = aws_vpc.main.id
-  service_name = "com.amazonaws.${data.aws_region.current.name}.dynamodb"
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.dynamodb"
   vpc_endpoint_type = "Gateway"
-  route_table_ids = concat([aws_route_table.public.id], aws_route_table.app[*].id)
+  route_table_ids   = concat([aws_route_table.public.id], aws_route_table.app[*].id)
 
   tags = merge(var.tags, {
     Name = "${var.project_name}-${var.environment}-dynamodb-endpoint"

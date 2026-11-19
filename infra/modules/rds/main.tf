@@ -50,14 +50,14 @@ resource "aws_secretsmanager_secret_version" "db_credentials" {
 
 # Instância RDS PostgreSQL
 resource "aws_db_instance" "postgres" {
-  identifier             = "${var.project_name}-${var.environment}-rds"
-  engine                 = "postgres"
-  engine_version         = "16.1"
-  instance_class         = var.instance_class
-  allocated_storage      = var.allocated_storage
-  max_allocated_storage  = 50
-  storage_type           = "gp3"
-  storage_encrypted      = true
+  identifier            = "${var.project_name}-${var.environment}-rds"
+  engine                = "postgres"
+  engine_version        = "16.1"
+  instance_class        = var.instance_class
+  allocated_storage     = var.allocated_storage
+  max_allocated_storage = 50
+  storage_type          = "gp3"
+  storage_encrypted     = true
 
   db_name  = var.database_name
   username = var.admin_username
