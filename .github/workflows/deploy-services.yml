@@ -27,19 +27,19 @@ jobs:
       - name: Instalar Dependências Node
         run: npm ci
 
-      - name: Verificar Tipagem (Workspaces)
-        run: npm run lint
-
       - name: Compilar Workspaces TypeScript
         run: npm run build
+
+      - name: Verificar Tipagem (Workspaces)
+        run: npm run lint
 
       - name: Executar Testes Unitários (Vitest)
         run: npm test
 
       - name: Lint Python (Lambdas e Simulador)
-        run: |
-          python3 -m pip install --quiet ruff
-          ruff check apps/simulator apps/lambdas
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "check apps/simulator apps/lambdas"
 
   deploy:
     name: Build Docker e Deploy no ECS
